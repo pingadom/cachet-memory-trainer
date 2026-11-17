@@ -57,7 +57,8 @@ npm run serve
 Then open http://localhost:8791. Any static file server pointed at `www/` works as well.
 
 ```bash
-npm test
+npm test            # unit tests for the core logic
+npm run test:e2e    # browser tests (run `npm ci` and `npx playwright install chromium` first)
 ```
 
 ## How it is built
@@ -81,7 +82,8 @@ www/
     content/   the lessons, the handbook, word lists
     ui/        shared components, exercises, the card arena
     views/     one module per page
-tests/core.test.js
+tests/core.test.js   unit tests
+tests/e2e/           browser tests (Playwright, desktop and phone)
 ```
 
 Persistence is one versioned JSON document in `localStorage`, read and written through `createStore(storage)`. The store accepts any Storage-like object, which is where an account or sync layer would attach.

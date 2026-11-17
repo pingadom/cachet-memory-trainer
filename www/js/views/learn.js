@@ -137,7 +137,7 @@ function lessonPage(main, id, ctx) {
       <section class="lsec"><h2>Worked example</h2><div class="prose">${lesson.worked}</div></section>
       <section class="lsec"><h2>Exercise</h2>${passMark > 0 && lesson.exercise.type !== 'task' ? `<p class="small">Pass mark: ${pct(passMark)}. You can repeat it as often as you like.</p>` : ''}<div data-ex></div><div data-outcome></div></section>
       <section class="lsec recap"><h2>Recap</h2><ul>${lesson.recap.map((r) => `<li>${esc(r)}</li>`).join('')}</ul></section>
-      <nav class="lesson-nav" data-next></nav>
+      <nav class="lesson-nav" data-lesson-nav></nav>
     </article>`;
 
   $$('[data-widget]', main).forEach((w) => WIDGETS[w.dataset.widget]?.(w, ctx));
@@ -147,7 +147,7 @@ function lessonPage(main, id, ctx) {
     return `${following ? `<a class="btn ${isDone(ctx.store.state, id) ? 'primary' : ''}" href="#/learn/${following.id}">Next lesson: ${esc(following.title)} →</a>` : '<a class="btn primary" href="#/speed">To the Speed Cards arena →</a>'}
       ${rec ? `<a class="btn quiet" href="${rec.href}">Or practise: ${esc(rec.title)}</a>` : ''}`;
   };
-  $('[data-next]', main).innerHTML = nextHTML();
+  $('[data-lesson-nav]', main).innerHTML = nextHTML();
 
   mountExercise($('[data-ex]', main), lesson.exercise, ctx, (res) => {
     const was = isDone(ctx.store.state, id);
@@ -158,7 +158,7 @@ function lessonPage(main, id, ctx) {
     out.innerHTML = passed
       ? `<div class="outcome pass"><b>${was ? 'Lesson already complete' : 'Lesson complete'}</b>${passMark > 0 && res.total > 1 ? ` · ${pct(res.score)}` : ''}<p class="small">${res.score === 1 ? 'Clean result.' : 'Passed.'} ${following ? `Next: <a href="#/learn/${following.id}">${esc(following.title)}</a>.` : ''}</p></div>`
       : `<div class="outcome retry"><b>${pct(res.score)}</b> · the pass mark is ${pct(passMark)}<p class="small">Read the notes on your result above, look again at the worked example, and repeat the exercise with a new set. Falling short on a first attempt is normal: it shows the exercise was hard enough to be worth doing.</p></div>`;
-    $('[data-next]', main).innerHTML = nextHTML();
+    $('[data-lesson-nav]', main).innerHTML = nextHTML();
     ctx.refreshNav?.();
   });
 }

@@ -81,8 +81,11 @@ export function arena(el, opts, ctx) {
     const next = () => { session.next(); paint(); };
     const prev = () => { stopAuto(); session.prev(); paint(); };
     const begin = () => { tick(); stopAuto(); session.beginRecall(); recall(session); };
-    $('[data-next]', el).onclick = next;
-    $('[data-prev]', el).onclick = prev;
+    // A mouse click leaves focus on the button, and Enter would then press it again instead of
+    // starting recall. Drop focus after pointer clicks; keyboard users keep theirs (detail === 0).
+    const pointer = (fn) => (e) => { fn(); if (e.detail > 0) e.currentTarget.blur(); };
+    $('[data-next]', el).onclick = pointer(next);
+    $('[data-prev]', el).onclick = pointer(prev);
     $('[data-recall]', el).onclick = begin;
     stage.onclick = (e) => { const r = stage.getBoundingClientRect(); (e.clientX - r.left < r.width * 0.3 ? prev : next)(); };
     let touchX = null;

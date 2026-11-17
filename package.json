@@ -5,9 +5,15 @@
   "type": "module",
   "description": "Cachet: learn memory techniques from zero to a shuffled deck of cards in under two minutes. A static site in www/, no build step.",
   "license": "MIT",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "serve": "node tools/serve.js",
-    "test": "node --test tests/core.test.js"
+    "test": "node --test tests/core.test.js",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
   }
 }
