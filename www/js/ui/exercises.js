@@ -187,10 +187,10 @@ export function pairs(el, opts, ctx) {
 
 // ── abstract → concrete ──────────────────────────────────────────
 export function imagine(el, opts, ctx) {
-  const { prompts } = opts;
+  const { prompts, examples = [] } = opts;
   el.innerHTML = `<form class="ex" autocomplete="off"><h3>Make it concrete</h3>
-    <p>For each item, describe the image you would use: what it is, and what it is doing. There are no right answers, only clear and unclear pictures.</p>
-    <div class="imagine">${prompts.map((p, i) => `<label><span>${esc(p)}</span><textarea name="i${i}" rows="2" placeholder="I picture…"></textarea><p class="small" data-fb="${i}"></p></label>`).join('')}</div>
+    <p>For each item, describe the image you would use: what it is, and what it is doing. There are no right answers, only clear and unclear pictures. After you review, an example appears under each one.</p>
+    <div class="imagine">${prompts.map((p, i) => `<label><span>${esc(p)}</span><textarea name="i${i}" rows="2" placeholder="I picture…"></textarea><p class="small" data-fb="${i}"></p>${examples[i] ? `<p class="small img-example" data-example="${i}" hidden><b>One way:</b> ${esc(examples[i])}</p>` : ''}</label>`).join('')}</div>
     <button class="btn primary">Review my images</button></form>`;
   $('form', el).onsubmit = (e) => {
     e.preventDefault();
@@ -209,6 +209,7 @@ export function imagine(el, opts, ctx) {
       fb.textContent = msg;
       fb.className = `small ${msg.startsWith('A specific') ? 'ok' : ''}`;
     });
+    $$('[data-example]', el).forEach((p) => { p.hidden = false; });
     const filled = areas.filter((a) => a.value.trim()).length;
     ctx.store.log({ kind: 'imagine', total: prompts.length, correct: Math.round(good) });
     if (filled === prompts.length) opts.onDone?.({ score: 1, correct: Math.round(good), total: prompts.length, feedback: [good >= prompts.length - 0.5 ? 'Every image is concrete and active.' : 'Read the notes under each image and sharpen the ones flagged. Then move on: this skill improves with use, not with polishing.'] });

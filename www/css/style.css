@@ -350,6 +350,7 @@ table { border-collapse: collapse; width: 100%; }
 .imagine { display: grid; gap: 14px; margin: 14px 0; }
 .imagine label > span { font: 560 1.1rem var(--display); display: block; margin-bottom: 4px; }
 .imagine p { margin: 4px 0 0; }
+.imagine .img-example { border-left: 2px solid var(--accent); padding-left: 10px; margin-top: 6px; color: var(--ink); }
 .q { font: 500 1.2rem/1.4 var(--display); margin: 8px 0 14px; }
 .q.big { font-size: 2.2rem; font-family: var(--mono); }
 .options { display: grid; gap: 8px; }

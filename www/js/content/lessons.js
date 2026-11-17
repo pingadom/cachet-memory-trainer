@@ -53,7 +53,12 @@ ${C('"Visualise" does not mean seeing a photograph. Some people get vivid pictur
 <li><b>Freedom</b> — abstract. A bird leaving an open cage.</li>
 <li><b>Thirty-four</b> — a pure symbol. Later you will have a fixed image for it; for now, a football shirt with 34 on the back.</li></ul>`,
     worked: `<p>Suppose you need to remember the word <b>"inflation"</b>. Meaning route: a banknote blown up like a balloon until it bursts. Sound route: someone <em>inflating</em> a tyre. Either works. The balloon-banknote is better, because the picture contains the idea itself and you are less likely to read it back as "pump" or "tyre".</p>`,
-    exercise: { type: 'imagine', prompts: ['justice', 'Tuesday', 'patience', 'inflation', 'the number 7'] },
+    exercise: { type: 'imagine', prompts: ['justice', 'Tuesday', 'patience', 'inflation', 'the number 7'], examples: [
+      'A judge brings a gavel down so hard the bench splits in two and splinters fly at you.',
+      'By sound: "Tues" is "twos". A pair of identical twins high-five so hard they knock a wall calendar flying.',
+      'A fisherman asleep in a deckchair while cobwebs grow over his rod and a snail climbs up his boot.',
+      'A price tag swelling like a balloon until it lifts a loaf of bread off the shelf and floats it out of the shop.',
+      'Cristiano Ronaldo in his number 7 shirt, leaping into his goal celebration and landing with a thud. Or by shape: a 7 as a cliff edge, with someone stepping off it.'] },
     recap: ['Abstract things must be translated into something you can picture.', 'Use the first concrete association you have. Yours will be more reliable than a borrowed one.', 'A faint sense of a scene is enough; you do not need photographic imagery.'],
   },
   {
