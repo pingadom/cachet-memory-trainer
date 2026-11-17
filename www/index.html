@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Cachet · Memory training, from first techniques to a deck of cards in two minutes</title>
+  <meta name="description" content="Learn memory techniques from the beginning: vivid imagery, the memory palace, number and card systems, PAO. Train towards memorising a shuffled deck of cards in under two minutes.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Cachet · Memory training">
+  <meta property="og:description" content="A structured course and trainer for memory techniques: memory palaces, the Major system, card systems and PAO, up to a full deck in under two minutes.">
+  <meta name="theme-color" content="#f5efe3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#141519" media="(prefers-color-scheme: dark)">
+  <script src="js/theme.js"></script>
+  <link rel="preload" href="fonts/plex-sans.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <div class="shell">
+    <nav class="nav" aria-label="Sections">
+      <a class="brand" href="#/"><span aria-hidden="true">¢</span>achet</a>
+      <p class="brand-sub">train your human cache</p>
+      <a href="#/" data-route=""><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg><span>Dashboard</span></a>
+      <a href="#/learn" data-route="learn"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6.5C10 5 7 4.5 4 5v13.5c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5V5c-3-.5-6 0-8 1.5zM12 6.5V20"/></svg><span>Learn</span></a>
+      <a href="#/train" data-route="train"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/></svg><span>Train</span><span class="badge" data-badge="due" title="Cards due for review" hidden></span></a>
+      <a href="#/systems" data-route="systems"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6M4 20h16"/></svg><span>My Systems</span></a>
+      <a href="#/speed" data-route="speed"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3.5" width="11" height="15" rx="1.5"/><path d="M8.5 20.5h9a1.5 1.5 0 0 0 1.5-1.5V7"/></svg><span>Speed Cards</span></a>
+      <a href="#/progress" data-route="progress"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V4M4 20h16M8 16l4-5 3 3 4-7"/></svg><span>Progress</span></a>
+      <a href="#/handbook" data-route="handbook"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h11a1 1 0 0 1 1 1v15H7a2 2 0 0 1-2-2V5a1 1 0 0 1 1-1zM5 18a2 2 0 0 1 2-2h11M9 8h6M9 11h4"/></svg><span>Handbook</span></a>
+      <div class="nav-foot">
+        <button id="theme-toggle" type="button"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg><span>Light / dark</span></button>
+        <a href="#/systems/data"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 19h14"/></svg><span>Backup &amp; data</span></a>
+      </div>
+    </nav>
+    <main id="main"></main>
+  </div>
+  <nav class="tabbar" aria-label="Sections">
+    <a href="#/" data-route="">Home</a>
+    <a href="#/learn" data-route="learn">Learn</a>
+    <a href="#/train" data-route="train">Train</a>
+    <a href="#/systems" data-route="systems">Systems</a>
+    <a href="#/speed" data-route="speed">Speed</a>
+    <a href="#/progress" data-route="progress">Progress</a>
+    <a href="#/handbook" data-route="handbook">Book</a>
+  </nav>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <noscript><p style="padding:24px">Cachet is an interactive trainer and needs JavaScript to run.</p></noscript>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
