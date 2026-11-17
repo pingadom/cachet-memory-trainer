@@ -189,7 +189,7 @@ export function pairs(el, opts, ctx) {
 export function imagine(el, opts, ctx) {
   const { prompts, examples = [] } = opts;
   el.innerHTML = `<form class="ex" autocomplete="off"><h3>Make it concrete</h3>
-    <p>For each item, describe the image you would use: what it is, and what it is doing. There are no right answers, only clear and unclear pictures. After you review, an example appears under each one.</p>
+    <p>For each item, describe the image you would use: what it is, and what it is doing. There are no right answers, only clear and unclear pictures. After you review, an example appears under each one. Stuck? The <a href="#/systems/ideas" target="_blank" rel="noopener">idea finder</a> has starting points.</p>
     <div class="imagine">${prompts.map((p, i) => `<label><span>${esc(p)}</span><textarea name="i${i}" rows="2" placeholder="I picture…"></textarea><p class="small" data-fb="${i}"></p>${examples[i] ? `<p class="small img-example" data-example="${i}" hidden><b>One way:</b> ${esc(examples[i])}</p>` : ''}</label>`).join('')}</div>
     <button class="btn primary">Review my images</button></form>`;
   $('form', el).onsubmit = (e) => {

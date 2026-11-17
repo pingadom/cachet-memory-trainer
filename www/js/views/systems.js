@@ -5,10 +5,11 @@ import { DECK, SUITS, RANKS, SUIT_NAME, SUIT_SYM, cardName, newDeck, isCard } fr
 import { EXAMPLE_IMAGES, EXAMPLE_PAO, EXAMPLE_PEGS, MAJOR, pegId, savedImageCount } from '../core/systems.js';
 import { effectivePao, encodeTriple, findConflicts, paoCompletion, FIELDS, FIELD_NAME } from '../core/pao.js';
 import { allLoci, uid } from '../core/store.js';
+import { findIdeas } from '../core/ideas.js';
 import { cardStatHTML } from './home.js';
 import { esc, $, $$, cardHTML, cardInline, progressBar, shrinkImage, download, keepFocus } from '../ui/dom.js';
 
-const TABS = [['palaces', 'Memory palaces'], ['cards', 'Card images'], ['pao', 'PAO system'], ['numbers', 'Numbers'], ['data', 'Data']];
+const TABS = [['palaces', 'Memory palaces'], ['cards', 'Card images'], ['pao', 'PAO system'], ['numbers', 'Numbers'], ['ideas', 'Idea finder'], ['data', 'Data']];
 
 export function systems(main, route, ctx) {
   const tab = TABS.some(([k]) => k === route.parts[1]) ? route.parts[1] : 'palaces';
@@ -16,7 +17,7 @@ export function systems(main, route, ctx) {
     <header class="page-head"><h1 tabindex="-1">My Systems</h1><p class="lede">The reusable parts of your memory: the places you store things, and the fixed images you store. Everything here is saved on this device as you type.</p></header>
     <nav class="tabs" aria-label="Systems">${TABS.map(([k, v]) => `<a href="#/systems/${k}" class="${k === tab ? 'on' : ''}" ${k === tab ? 'aria-current="page"' : ''}>${v}</a>`).join('')}</nav>
     <div data-tab></div>`;
-  ({ palaces, cards, pao, numbers, data })[tab]($('[data-tab]', main), route, ctx);
+  ({ palaces, cards, pao, numbers, ideas, data })[tab]($('[data-tab]', main), route, ctx);
 }
 
 // ── palaces ──────────────────────────────────────────────────────
@@ -234,10 +235,54 @@ function numbers(el, route, ctx) {
       <div class="major-strip">${MAJOR.map((m) => `<div><b class="mono">${m.d}</b><span>${m.sounds}</span></div>`).join('')}</div>
       <p class="small">Vowels and w, h, y carry no value. Go by sound: <em>knife</em> is n–f, 28. <a href="#/learn/major-code">The lesson</a> explains the code.</p></section>
     <section class="panel"><div class="panel-h"><h2>Images for 00–99</h2><span class="small mono" data-count>${count()}/100 your own</span></div>
-      <p class="small">Grey placeholders are the example list. Type your own to replace one; clear the box to go back to the example.</p>
+      <p class="small">Grey placeholders are the example list. Type your own to replace one; clear the box to go back to the example. Stuck on one? The <a href="#/systems/ideas">idea finder</a> lists Major words, shapes and famous numbers.</p>
       <div class="peg-grid">${Array.from({ length: 100 }, (_, i) => { const id = pegId(i); return `<label><span class="mono">${id}</span><input type="text" data-peg="${id}" value="${esc(st.pegs[id] || '')}" placeholder="${esc(EXAMPLE_PEGS[i])}" maxlength="40" aria-label="Image for ${id}"></label>`; }).join('')}</div>
       <div class="row"><a class="btn primary" href="#/train/pegs">Drill the number images</a><a class="btn" href="#/train/digits?n=20">20-digit number</a></div></section>`;
   $$('[data-peg]', el).forEach((i) => { i.onchange = () => { const v = i.value.trim(); if (v) st.pegs[i.dataset.peg] = v; else delete st.pegs[i.dataset.peg]; store.save(); $('[data-count]', el).textContent = `${count()}/100 your own`; }; });
+}
+
+// ── idea finder ──────────────────────────────────────────────────
+const IDEA_SAMPLES = ['47', 'Tuesday', 'March', '7 of hearts', 'justice', '1066', 'Q'];
+
+function ideas(el, route, ctx) {
+  const store = ctx.store;
+  const st = store.state;
+  el.innerHTML = `
+    <section class="panel"><h2>Idea finder</h2>
+      <p>Stuck for a picture? Type a number, a day, a month, a letter, a card or an abstract word. You get starting points sorted by route: your own system, the Major code, shape, rhyme, sound and meaning.</p>
+      <form class="row tight idea-form" data-idea-form><input type="text" data-idea-q value="${esc(route.query.q || '')}" placeholder="47, Tuesday, March, 7 of hearts, justice…" aria-label="What do you want to picture?" autocomplete="off" maxlength="60"><button class="btn primary">Find ideas</button></form>
+      <div class="chips idea-samples"><span class="small">Try:</span>${IDEA_SAMPLES.map((x) => `<button type="button" class="chip" data-sample="${esc(x)}">${esc(x)}</button>`).join('')}</div>
+      <p class="small">These are prompts, not answers. Take the one that makes a picture appear straight away, then make it bigger, stranger and moving.</p></section>
+    <div data-idea-out aria-live="polite"></div>`;
+  const q = $('[data-idea-q]', el);
+  const out = $('[data-idea-out]', el);
+  const paint = () => {
+    const text = q.value.trim();
+    try { history.replaceState(null, '', `#/systems/ideas${text ? `?q=${encodeURIComponent(text)}` : ''}`); } catch { /* ignore */ }
+    const r = findIdeas(text, st);
+    if (!r) { out.innerHTML = ''; return; }
+    const groups = r.groups.filter((x) => x.items.length || x.note);
+    out.innerHTML = `<section class="panel"><div class="panel-h"><h2>Ideas for ${esc(r.label)}</h2><span class="small mono">${esc(r.kind)}</span></div>
+      <div class="idea-groups">${groups.map((x) => `<div class="idea-group"><h3>${esc(x.title)}</h3>${x.items.length ? `<ul>${x.items.map((i) => `<li>${esc(i)}</li>`).join('')}</ul>` : ''}${x.note ? `<p class="small">${esc(x.note)}</p>` : ''}</div>`).join('')}</div>
+      ${r.note ? `<p class="small">${esc(r.note)}</p>` : ''}
+      ${r.peg ? `<form class="row" data-peg-save><label class="small" for="peg-save">Your image for ${r.peg}</label><input id="peg-save" type="text" maxlength="40" value="${esc(st.pegs[r.peg] || '')}" placeholder="${esc(EXAMPLE_PEGS[Number(r.peg)])}"><button class="btn">Save</button></form>` : ''}</section>`;
+    const f = $('[data-peg-save]', out);
+    if (f) {
+      f.onsubmit = (e) => {
+        e.preventDefault();
+        const v = $('input', f).value.trim();
+        if (v) st.pegs[r.peg] = v; else delete st.pegs[r.peg];
+        store.save();
+        ctx.toast(v ? `Saved: ${r.peg} is now ${v}` : `${r.peg} is back to the example`);
+        paint();
+      };
+    }
+  };
+  $('[data-idea-form]', el).onsubmit = (e) => { e.preventDefault(); paint(); };
+  q.oninput = paint;
+  $$('[data-sample]', el).forEach((b) => { b.onclick = () => { q.value = b.dataset.sample; paint(); q.focus(); }; });
+  paint();
+  if (!q.value) q.focus();
 }
 
 // ── data ─────────────────────────────────────────────────────────

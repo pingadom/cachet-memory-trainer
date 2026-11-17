@@ -10,6 +10,7 @@ import { createStore, memoryStorage, migrate, defaults, KEY, VERSION } from '../
 import { LESSONS, STAGES, nextLesson, recordLesson, overallProgress, isDone, skipped, lessonsIn } from '../www/js/core/curriculum.js';
 import { recommend, dailyPlan, seqProgress, deckSummary, awardMilestones, goals, cardSummary } from '../www/js/core/adapt.js';
 import { createArenaSession } from '../www/js/core/session.js';
+import { majorCode, majorWords, findIdeas } from '../www/js/core/ideas.js';
 
 // ── deck generation ──────────────────────────────────────────────
 test('the reference deck has 52 unique cards', () => {
@@ -487,4 +488,45 @@ test('card summary counts mastery levels and due reviews', () => {
   assert.equal(sum.levels.automatic, 1);
   assert.equal(sum.levels.new, 50);
   assert.deepEqual(sum.due, ['KS']);
+});
+
+// ── idea finder ──────────────────────────────────────────────────
+test('the Major encoder reads common spellings by sound', () => {
+  const cases = { knife: '28', comb: '73', chalk: '67', cage: '76', giant: '621', tiger: '174', bomb: '93', phone: '82', ship: '69', duck: '17', mummy: '33', box: '970', castle: '705', lion: '52' };
+  for (const [w, code] of Object.entries(cases)) assert.equal(majorCode(w), code, w);
+});
+
+test('every example peg spells its own number', () => {
+  EXAMPLE_PEGS.forEach((w, i) => assert.equal(majorCode(w), String(i).padStart(2, '0'), w));
+});
+
+test('Major word suggestions all match the digits asked for', () => {
+  for (const d of ['7', '42', '91', '741']) {
+    const ws = majorWords(d);
+    assert.ok(ws.length > 0, d);
+  }
+  assert.ok(majorWords('42').includes('rain'));
+});
+
+test('the idea finder recognises numbers, days, months, letters, cards and words', () => {
+  const st = defaults();
+  assert.equal(findIdeas('47', st).kind, 'number');
+  assert.equal(findIdeas('47', st).peg, '47');
+  assert.equal(findIdeas('tue', st).label, 'Tuesday');
+  assert.equal(findIdeas('Sept', st).label, 'September');
+  assert.equal(findIdeas('q', st).kind, 'letter');
+  assert.equal(findIdeas('7 of hearts', st).kind, 'card');
+  assert.equal(findIdeas('justice', st).kind, 'word');
+  assert.equal(findIdeas('   ', st), null);
+  const long = findIdeas('314159', st);
+  assert.match(long.groups.find((x) => x.title === 'In pairs').items[0], /31 → mat · 41 → rat · 59 → lip/);
+});
+
+test('the idea finder prefers the learner\'s own number image', () => {
+  const st = defaults();
+  st.pegs['47'] = 'rocket';
+  const r = findIdeas('47', st);
+  assert.equal(r.groups[0].title, 'Your image');
+  assert.deepEqual(r.groups[0].items, ['rocket']);
+  assert.match(findIdeas('Tuesday', st).groups.at(-1).items[0], /^the example image for 02/);
 });

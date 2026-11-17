@@ -2,7 +2,7 @@
 import { test, expect } from '@playwright/test';
 
 const ROUTES = ['', 'learn', 'learn/why-techniques', 'learn/pao-idea', 'train', 'train/c2i', 'train/i2c', 'train/rapid',
-  'train/digits', 'train/pao-decode', 'systems/palaces', 'systems/cards', 'systems/pao', 'systems/numbers',
+  'train/digits', 'train/pao-decode', 'systems/palaces', 'systems/cards', 'systems/pao', 'systems/numbers', 'systems/ideas',
   'systems/data', 'speed', 'progress', 'handbook'];
 
 test.beforeEach(async ({ page }) => {
@@ -164,4 +164,18 @@ test('in dark mode the Data tab buttons still do their own jobs', async ({ page 
   await page.getByRole('button', { name: 'Download a backup' }).click();
   expect((await download).suggestedFilename()).toMatch(/^cachet-backup-/);
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+});
+
+test('the idea finder suggests images and can save a number image', async ({ page }) => {
+  await page.goto('#/systems/ideas');
+  await page.locator('[data-idea-q]').fill('Wednesday');
+  await expect(page.locator('[data-idea-out] h2')).toHaveText('Ideas for Wednesday');
+  await expect(page.locator('[data-idea-out]')).toContainText('a wedding');
+  await page.getByRole('button', { name: '47' }).click();
+  await expect(page.locator('[data-idea-out]')).toContainText('Major code words');
+  await page.locator('#peg-save').fill('rocket launch');
+  await page.getByRole('button', { name: 'Save', exact: true }).click();
+  await expect(page.locator('[data-idea-out] .idea-group').first()).toContainText('rocket launch');
+  await page.goto('#/systems/numbers');
+  await expect(page.locator('[data-peg="47"]')).toHaveValue('rocket launch');
 });
