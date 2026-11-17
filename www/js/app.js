@@ -86,4 +86,9 @@ document.getElementById('theme-toggle').addEventListener('click', () => {
   th.set(th.dark() ? 'notebook' : 'night');
 });
 
+const paintUiSwitch = () => document.querySelectorAll('.ui-switch [data-ui]').forEach((b) => b.classList.toggle('on', b.dataset.ui === window.CachetTheme.ui()));
+document.querySelectorAll('.ui-switch [data-ui]').forEach((b) => { b.onclick = () => window.CachetTheme.setUi(b.dataset.ui); });
+document.addEventListener('cachet:ui', paintUiSwitch);
+paintUiSwitch();
+
 render();

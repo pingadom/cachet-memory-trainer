@@ -15,7 +15,16 @@
       m.setAttribute('content', c === 'auto' ? BG[dark ? 'night' : 'notebook'] : BG[c]);
     });
   }
+  // Interface style (layout and type), separate from light/dark. ?ui=name in the URL sets it.
+  const UI_KEY = 'cachet-ui';
+  const UIS = ['notebook', 'ledger', 'library', 'table'];
+  try { const q = new URLSearchParams(location.search).get('ui'); if (UIS.includes(q)) localStorage.setItem(UI_KEY, q); } catch { /* ignore */ }
+  const ui = () => { try { const v = localStorage.getItem(UI_KEY); return UIS.includes(v) ? v : 'notebook'; } catch { return 'notebook'; } };
+  const applyUi = () => { const v = ui(); if (v === 'notebook') root.removeAttribute('data-ui'); else root.setAttribute('data-ui', v); };
+  applyUi();
   window.CachetTheme = {
+    UIS, ui,
+    setUi(v) { try { localStorage.setItem(UI_KEY, v); } catch { /* this visit only */ } applyUi(); document.dispatchEvent(new CustomEvent('cachet:ui')); },
     choice, current, dark: () => current() === 'night',
     set(v) { try { localStorage.setItem(KEY, v); } catch { /* applies for this visit only */ } apply(); },
   };

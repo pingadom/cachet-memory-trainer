@@ -1,0 +1,140 @@
+/* Design exploration: three alternative interface styles, applied with <html data-ui="…">.
+   Notebook (no attribute) is the current design. Each style sets its own palette, so it
+   overrides light/dark for now; a dark variant would follow for whichever style is chosen. */
+
+/* ── the switcher used to compare them ── */
+.ui-switch { position: fixed; right: 16px; bottom: 16px; z-index: 40; display: flex; align-items: center; gap: 2px; padding: 4px; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12); font: 500 0.8rem var(--body); }
+.ui-switch span { color: var(--muted); padding: 0 8px 0 10px; font: 600 0.68rem var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+.ui-switch button { border: 0; background: none; color: var(--muted); font: inherit; padding: 6px 11px; border-radius: 999px; cursor: pointer; }
+.ui-switch button.on { background: var(--accent); color: var(--on-accent); }
+@media (max-width: 820px) { .ui-switch { bottom: 70px; right: 8px; left: 8px; justify-content: center; } }
+
+/* Shared: a horizontal top bar instead of the sidebar (Ledger and Table). */
+@media (min-width: 821px) {
+  :root[data-ui='ledger'] .shell, :root[data-ui='table'] .shell { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  :root[data-ui='ledger'] .nav, :root[data-ui='table'] .nav { position: sticky; top: 0; z-index: 8; height: auto; flex-direction: row; align-items: center; gap: 2px; padding: 10px 28px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  :root[data-ui='ledger'] .brand-sub, :root[data-ui='table'] .brand-sub { display: none; }
+  :root[data-ui='ledger'] .nav .brand, :root[data-ui='table'] .nav .brand { padding: 0 18px 0 0; margin-right: 8px; }
+  :root[data-ui='ledger'] .nav-foot, :root[data-ui='table'] .nav-foot { margin: 0 0 0 auto; padding: 0; border: 0; flex-direction: row; }
+  :root[data-ui='table'] .nav-foot span { display: none; }
+  :root[data-ui='ledger'] .nav-foot { font-size: 0.85rem; }
+  :root[data-ui='ledger'] .nav a, :root[data-ui='table'] .nav a, :root[data-ui='ledger'] .nav button, :root[data-ui='table'] .nav button { white-space: nowrap; }
+}
+
+/* ════════════════ LEDGER ════════════════
+   Swiss and editorial: plain paper, black type, one red accent, rules instead of boxes,
+   large tabular figures. Denser; reads like a well-set results table. */
+:root[data-ui='ledger'] {
+  --bg: #fbfaf7; --panel: #fbfaf7; --panel-2: #efede7; --ink: #111111; --muted: #6b6860; --line: #d9d6ce;
+  --accent: #c8102e; --on-accent: #fff; --accent-soft: #fbe6e9;
+  --ok: #1d6b3a; --ok-soft: #e4f0e7; --bad: #c8102e; --bad-soft: #fbe6e9; --warn-soft: #f6efd9;
+  --suit-red: #c8102e; --card: #ffffff; --grid: transparent;
+  --display: 'IBM Plex Sans', system-ui, sans-serif; --radius: 2px;
+  color-scheme: light;
+}
+:root[data-ui='ledger'] body { background-image: none; }
+:root[data-ui='ledger'] h1, :root[data-ui='ledger'] h2, :root[data-ui='ledger'] h3 { font-family: var(--body); font-weight: 600; letter-spacing: -0.02em; }
+:root[data-ui='ledger'] h1 { font-size: 2.5rem; letter-spacing: -0.035em; }
+:root[data-ui='ledger'] main { max-width: 1120px; padding-top: 40px; }
+:root[data-ui='ledger'] .nav { background: var(--bg); }
+:root[data-ui='ledger'] .nav a.active { background: none; color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); border-radius: 0; }
+:root[data-ui='ledger'] .nav .ni { display: none; }
+:root[data-ui='ledger'] .brand { font-family: var(--body); font-weight: 700; letter-spacing: -0.04em; }
+:root[data-ui='ledger'] .brand span { font-style: normal; color: var(--accent); }
+:root[data-ui='ledger'] .panel, :root[data-ui='ledger'] .ex, :root[data-ui='ledger'] .tile, :root[data-ui='ledger'] .widget { background: transparent; border: 0; border-top: 2px solid var(--ink); border-radius: 0; padding: 14px 0 20px; }
+:root[data-ui='ledger'] .panel h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+:root[data-ui='ledger'] .grid2 { gap: 32px; }
+:root[data-ui='ledger'] .tiles { gap: 0 28px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+:root[data-ui='ledger'] .tile { border-top-width: 1px; border-top-color: var(--line); }
+:root[data-ui='ledger'] .tile-v { font-size: 2.4rem; letter-spacing: -0.03em; }
+:root[data-ui='ledger'] .btn { border-radius: 2px; border-color: var(--ink); }
+:root[data-ui='ledger'] .btn.primary { background: var(--ink); border-color: var(--ink); }
+:root[data-ui='ledger'] .seg, :root[data-ui='ledger'] .chip, :root[data-ui='ledger'] input, :root[data-ui='ledger'] textarea { border-radius: 2px; }
+:root[data-ui='ledger'] .objective, :root[data-ui='ledger'] .next-lesson { border-radius: 0; background: transparent; border: 0; border-left: 3px solid var(--accent); }
+:root[data-ui='ledger'] .pc { border-radius: 4px; box-shadow: none; border-color: #bdb9ae; font-family: var(--body); }
+:root[data-ui='ledger'] .pk, :root[data-ui='ledger'] .mcell, :root[data-ui='ledger'] .ci { font-family: var(--body); }
+:root[data-ui='ledger'] .journey .node { border-radius: 0; width: 14px; height: 14px; margin-top: 4px; }
+:root[data-ui='ledger'] .journey li::before { top: 10px; height: 1px; }
+:root[data-ui='ledger'] .bar { height: 3px; border-radius: 0; } :root[data-ui='ledger'] .bar span { border-radius: 0; }
+:root[data-ui='ledger'] .big-score { font-size: 4rem; letter-spacing: -0.04em; }
+:root[data-ui='ledger'] .prose { font-size: 1.05rem; }
+:root[data-ui='ledger'] .lsec > h2 { color: var(--ink); }
+:root[data-ui='ledger'] .claim > b { color: var(--ink) !important; }
+
+/* ════════════════ LIBRARY ════════════════
+   Dark-first and bookish: deep green-black, brass accent, serif throughout,
+   generous margins. A reading room after hours, for long study sessions. */
+:root[data-ui='library'] {
+  --bg: #0e1714; --panel: #13201c; --panel-2: #1b2b26; --ink: #ebe4d2; --muted: #a39e8c; --line: #2b3b35;
+  --accent: #d6ab55; --on-accent: #1a1406; --accent-soft: #33301f;
+  --ok: #8fc79a; --ok-soft: #1c3226; --bad: #e88f6d; --bad-soft: #3a2419; --warn-soft: #302b1b;
+  --suit-red: #b3361d; --card: #f3ecdb; --grid: transparent;
+  --body: 'Newsreader', Georgia, serif; --radius: 4px;
+  color-scheme: dark;
+}
+:root[data-ui='library'] body { background-image: radial-gradient(ellipse at 50% -10%, #1a2a24 0%, transparent 60%); background-size: 100% 100%; font-size: 17.5px; }
+:root[data-ui='library'] .pc { color: #1d1a14; border-color: #d8ceb6; box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35); }
+:root[data-ui='library'] .pc.red, :root[data-ui='library'] .pk.red { color: #b3361d; }
+:root[data-ui='library'] .pk { color: #1d1a14; border-color: #d8ceb6; }
+:root[data-ui='library'] .ci.red, :root[data-ui='library'] .seg .red { color: #ef8b6a; }
+:root[data-ui='library'] h1 { font-size: 2.6rem; font-weight: 500; font-style: italic; }
+:root[data-ui='library'] h2 { font-size: 1.35rem; font-weight: 500; }
+:root[data-ui='library'] main { padding: 52px 64px 96px; max-width: 980px; }
+:root[data-ui='library'] .nav { background: #0b1210; border-right-color: var(--line); padding-top: 32px; }
+:root[data-ui='library'] .nav a, :root[data-ui='library'] .nav button { font-size: 1.05rem; }
+:root[data-ui='library'] .nav a.active { background: none; color: var(--accent); font-style: italic; }
+:root[data-ui='library'] .brand { font-size: 1.9rem; font-style: italic; }
+:root[data-ui='library'] .panel, :root[data-ui='library'] .ex, :root[data-ui='library'] .tile, :root[data-ui='library'] .widget { border-color: var(--line); box-shadow: inset 0 1px 0 rgba(214, 171, 85, 0.08); }
+:root[data-ui='library'] .panel { padding: 24px 28px; }
+:root[data-ui='library'] .tile-v, :root[data-ui='library'] .big-score { font-family: var(--body); font-weight: 500; }
+:root[data-ui='library'] .tile-v { font-size: 2rem; color: var(--accent); }
+:root[data-ui='library'] .btn { font-family: var(--body); font-size: 1rem; border-radius: 3px; }
+:root[data-ui='library'] .btn.primary { background: var(--accent); }
+:root[data-ui='library'] .objective, :root[data-ui='library'] .next-lesson { background: transparent; border-left-color: var(--accent); }
+:root[data-ui='library'] .objective b, :root[data-ui='library'] .claim > b, :root[data-ui='library'] .lsec > h2 { font-family: var(--mono); }
+:root[data-ui='library'] .prose { font-size: 1.12rem; line-height: 1.72; }
+:root[data-ui='library'] .journey .current .node { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-soft); }
+:root[data-ui='library'] .bar span { background: var(--accent); }
+:root[data-ui='library'] .chart .line, :root[data-ui='library'] .chart .dot { stroke: var(--accent); }
+:root[data-ui='library'] .chart .dot { fill: var(--accent); }
+:root[data-ui='library'] .tabbar { background: #0b1210; }
+
+/* ════════════════ TABLE ════════════════
+   Product-like and focused: soft grey-blue canvas, white rounded panels with depth,
+   top navigation, one centred column, and card screens set on green baize. */
+:root[data-ui='table'] {
+  --bg: #eef1f5; --panel: #ffffff; --panel-2: #f2f4f8; --ink: #161b26; --muted: #5d6677; --line: #e1e5ec;
+  --accent: #3b4fd8; --on-accent: #fff; --accent-soft: #e8ebfd;
+  --ok: #15803d; --ok-soft: #e3f4e8; --bad: #c2410c; --bad-soft: #fdece4; --warn-soft: #fbf3dc;
+  --suit-red: #c62a2a; --card: #ffffff; --grid: transparent;
+  --display: 'IBM Plex Sans', system-ui, sans-serif; --radius: 16px;
+  --felt: #1f5c45; --felt-2: #17473a;
+  color-scheme: light;
+}
+:root[data-ui='table'] body { background-image: none; }
+:root[data-ui='table'] h1, :root[data-ui='table'] h2, :root[data-ui='table'] h3 { font-family: var(--body); font-weight: 650; letter-spacing: -0.015em; }
+:root[data-ui='table'] h1 { font-size: 2rem; }
+:root[data-ui='table'] main { max-width: 860px; padding-top: 36px; }
+:root[data-ui='table'] .nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); justify-content: center; }
+:root[data-ui='table'] .nav a { border-radius: 999px; padding: 7px 14px; }
+:root[data-ui='table'] .nav a.active { background: var(--ink); color: #fff; }
+:root[data-ui='table'] .nav .ni { width: 16px; height: 16px; }
+:root[data-ui='table'] .brand { font-family: var(--body); font-weight: 700; letter-spacing: -0.03em; }
+:root[data-ui='table'] .brand span { font-style: normal; }
+:root[data-ui='table'] .panel, :root[data-ui='table'] .ex, :root[data-ui='table'] .tile, :root[data-ui='table'] .widget { border: 0; box-shadow: 0 1px 2px rgba(22, 27, 38, 0.06), 0 6px 24px rgba(22, 27, 38, 0.05); }
+:root[data-ui='table'] .panel { padding: 22px 24px; }
+:root[data-ui='table'] .btn { border-radius: 999px; padding: 9px 18px; }
+:root[data-ui='table'] .seg, :root[data-ui='table'] .chip { border-radius: 999px; }
+:root[data-ui='table'] .objective, :root[data-ui='table'] .next-lesson { border: 0; background: var(--accent-soft); border-radius: 12px; }
+:root[data-ui='table'] .tile-v { font-size: 1.9rem; }
+:root[data-ui='table'] .bar { height: 8px; }
+:root[data-ui='table'] .pc { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 4px 10px rgba(0, 0, 0, 0.12); border: 0; font-family: var(--body); }
+:root[data-ui='table'] .pk, :root[data-ui='table'] .mcell, :root[data-ui='table'] .ci { font-family: var(--body); }
+/* card screens on baize */
+:root[data-ui='table'] .deck-stage, :root[data-ui='table'] .drill .prompt { background: radial-gradient(ellipse at 50% 30%, var(--felt) 0%, var(--felt-2) 100%); border-radius: 14px; padding: 28px 12px 22px; margin: 6px 0 12px; color: #f2efe6; }
+:root[data-ui='table'] .drill .prompt .answer-line, :root[data-ui='table'] .deck-stage .hint, :root[data-ui='table'] .drill .prompt .cue { color: #f2efe6; }
+:root[data-ui='table'] .drill .prompt .assoc { color: #fff; }
+:root[data-ui='table'] .drill .prompt .bad { color: #ffb59a; } :root[data-ui='table'] .drill .prompt .ok { color: #9fe3b4; }
+:root[data-ui='table'] .slots { background: var(--panel-2); border-radius: 12px; padding: 10px; }
+:root[data-ui='table'] .tabbar a.active { background: var(--ink); color: #fff; border-radius: 999px; }
+@media (max-width: 820px) { :root[data-ui='library'] main { padding: 24px 16px 96px; } :root[data-ui='library'] h1 { font-size: 2rem; } }
