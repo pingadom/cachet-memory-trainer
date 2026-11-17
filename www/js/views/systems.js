@@ -253,14 +253,19 @@ function data(el, route, ctx) {
       <div class="row"><button class="btn primary" data-export>Download a backup</button><label class="btn">Restore from a backup<input type="file" accept="application/json,.json" data-import hidden></label></div>
       <p class="small">Restoring replaces everything currently here with the contents of the file. The file is checked first; a file that is not a Cachet backup changes nothing.</p></section>
     <section class="panel"><h2>Appearance</h2>
-      <div class="seg" data-theme>${[['auto', 'Match system'], ['notebook', 'Notebook'], ['night', 'Night desk']].map(([k, v]) => `<button data-v="${k}" class="${theme.choice() === k ? 'on' : ''}">${v}</button>`).join('')}</div></section>
+      <p class="small">Style</p>
+      <div class="seg" data-style-seg>${[['ledger', 'Ledger'], ['notebook', 'Notebook'], ['library', 'Library'], ['table', 'Table']].map(([k, v]) => `<button data-v="${k}" class="${theme.ui() === k ? 'on' : ''}">${v}</button>`).join('')}</div>
+      <p class="small">${{ ledger: 'The default: plain paper, ruled sections, large figures.', notebook: 'The original: graph paper and serif headings.', library: 'Dark, serif and brass. Dark only, so the light/dark setting below does not apply.', table: 'Soft panels, with card screens on green baize. Light only, so the light/dark setting below does not apply.' }[theme.ui()]}</p>
+      <p class="small">Light or dark</p>
+      <div class="seg" data-theme-seg>${[['auto', 'Match system'], ['notebook', 'Light'], ['night', 'Dark']].map(([k, v]) => `<button data-v="${k}" class="${theme.choice() === k ? 'on' : ''}">${v}</button>`).join('')}</div></section>
     <section class="panel"><h2>Start again</h2><p class="small">Deletes all progress and systems on this device. This cannot be undone; download a backup first.</p>
       <div class="row"><button class="btn danger" data-reset>Delete everything</button></div></section>`;
   $('[data-export]', el).onclick = () => download(`cachet-backup-${new Date().toISOString().slice(0, 10)}.json`, store.exportJSON());
   $('[data-import]', el).onchange = async (e) => {
     try { store.importJSON(await e.target.files[0].text()); ctx.toast('Backup restored.'); data(el, route, ctx); ctx.refreshNav?.(); } catch (err) { ctx.toast(`Not restored: ${err.message || 'the file could not be read.'}`); }
   };
-  $$('[data-theme] button', el).forEach((b) => { b.onclick = () => { theme.set(b.dataset.v); $$('[data-theme] button', el).forEach((x) => x.classList.toggle('on', x === b)); }; });
+  $$('[data-theme-seg] button', el).forEach((b) => { b.onclick = () => { theme.set(b.dataset.v); $$('[data-theme-seg] button', el).forEach((x) => x.classList.toggle('on', x === b)); }; });
+  $$('[data-style-seg] button', el).forEach((b) => { b.onclick = () => { theme.setUi(b.dataset.v); data(el, route, ctx); }; });
   const reset = $('[data-reset]', el);
   reset.onclick = () => { if (reset.dataset.sure !== '1') { reset.dataset.sure = '1'; reset.textContent = 'Yes, delete everything on this device'; return; } store.reset(); ctx.toast('Everything was deleted.'); data(el, route, ctx); ctx.refreshNav?.(); };
 }

@@ -1,32 +1,40 @@
 // Theme: loaded in <head> without `defer` so the right colours are applied before first paint.
-// 'auto' follows the system (Notebook by day, Night desk in dark mode). Stored per device.
+// Two independent settings, both stored per device:
+//   style        ledger (default) | notebook | library (dark only) | table (light only)
+//   light/dark   'auto' follows the system; or 'notebook' (light) / 'night' (dark)
 (function () {
   const KEY = 'cachet-theme';
-  const BG = { notebook: '#f5efe3', night: '#141519' };
+  const UI_KEY = 'cachet-ui';
+  const UIS = ['ledger', 'notebook', 'library', 'table'];
+  // Browser chrome colour per style: [light, dark].
+  const BG = { ledger: ['#fbfaf7', '#121212'], notebook: ['#f5efe3', '#141519'], library: ['#0e1714', '#0e1714'], table: ['#eef1f5', '#eef1f5'] };
   const root = document.documentElement;
   const mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : { matches: false, addEventListener() {} };
-  const choice = () => { try { const v = localStorage.getItem(KEY); return v === 'notebook' || v === 'night' ? v : 'auto'; } catch { return 'auto'; } };
+  const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
+  const write = (k, v) => { try { localStorage.setItem(k, v); } catch { /* applies for this visit only */ } };
+
+  try { const q = new URLSearchParams(location.search).get('ui'); if (UIS.includes(q)) write(UI_KEY, q); } catch { /* ignore */ }
+  const ui = () => { const v = read(UI_KEY); return UIS.includes(v) ? v : 'ledger'; };
+  const choice = () => { const v = read(KEY); return v === 'notebook' || v === 'night' ? v : 'auto'; };
   const current = () => { const c = choice(); return c === 'auto' ? (mq.matches ? 'night' : 'notebook') : c; };
+
   function apply() {
+    const u = ui();
+    if (u === 'notebook') root.removeAttribute('data-ui'); else root.setAttribute('data-ui', u);
     const c = choice();
     if (c === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', c);
+    const pair = BG[u];
     document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
-      const dark = (m.getAttribute('media') || '').includes('dark');
-      m.setAttribute('content', c === 'auto' ? BG[dark ? 'night' : 'notebook'] : BG[c]);
+      const darkMeta = (m.getAttribute('media') || '').includes('dark');
+      m.setAttribute('content', pair[(c === 'auto' ? darkMeta : c === 'night') ? 1 : 0]);
     });
   }
-  // Interface style (layout and type), separate from light/dark. ?ui=name in the URL sets it.
-  const UI_KEY = 'cachet-ui';
-  const UIS = ['notebook', 'ledger', 'library', 'table'];
-  try { const q = new URLSearchParams(location.search).get('ui'); if (UIS.includes(q)) localStorage.setItem(UI_KEY, q); } catch { /* ignore */ }
-  const ui = () => { try { const v = localStorage.getItem(UI_KEY); return UIS.includes(v) ? v : 'notebook'; } catch { return 'notebook'; } };
-  const applyUi = () => { const v = ui(); if (v === 'notebook') root.removeAttribute('data-ui'); else root.setAttribute('data-ui', v); };
-  applyUi();
+
   window.CachetTheme = {
-    UIS, ui,
-    setUi(v) { try { localStorage.setItem(UI_KEY, v); } catch { /* this visit only */ } applyUi(); document.dispatchEvent(new CustomEvent('cachet:ui')); },
-    choice, current, dark: () => current() === 'night',
-    set(v) { try { localStorage.setItem(KEY, v); } catch { /* applies for this visit only */ } apply(); },
+    UIS, ui, choice, current,
+    dark: () => ui() === 'library' || (ui() !== 'table' && current() === 'night'),
+    setUi(v) { write(UI_KEY, v); apply(); },
+    set(v) { write(KEY, v); apply(); },
   };
   mq.addEventListener('change', apply);
   apply();

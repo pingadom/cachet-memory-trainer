@@ -141,3 +141,27 @@ test('a palace can be built and walked', async ({ page }) => {
   await page.getByRole('button', { name: /Reveal/ }).click();
   await expect(page.locator('[data-ans]')).toHaveText('Doormat');
 });
+
+test('Ledger is the default style; style and light/dark can be changed', async ({ page }) => {
+  await page.goto('#/systems/data');
+  await expect(page.locator('html')).toHaveAttribute('data-ui', 'ledger');
+  await page.locator('[data-theme-seg] button', { hasText: 'Dark' }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+  const bg = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(bg).toBe('rgb(18, 18, 18)');
+  await page.locator('[data-style-seg] button', { hasText: 'Notebook' }).click();
+  await expect(page.locator('html')).not.toHaveAttribute('data-ui', /./);
+  await page.reload();
+  await expect(page.locator('html')).not.toHaveAttribute('data-ui', /./);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+});
+
+test('in dark mode the Data tab buttons still do their own jobs', async ({ page }) => {
+  await page.goto('#/systems/data');
+  await page.locator('[data-theme-seg] button', { hasText: 'Dark' }).click();
+  await page.reload();
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Download a backup' }).click();
+  expect((await download).suggestedFilename()).toMatch(/^cachet-backup-/);
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'night');
+});

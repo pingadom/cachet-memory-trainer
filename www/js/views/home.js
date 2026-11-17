@@ -183,7 +183,7 @@ export function progress(main, route, ctx) {
       ? `<ul class="weak">${sum.weak.slice(0, 8).map((id) => { const s = state.stats[`${field}:${id}`]; return `<li>${cardInline(id)}<span>${esc(assoc(id))}</span><span class="small mono">${pct(recentAccuracy(s))} · ${secs(recentSpeed(s))}</span></li>`; }).join('')}</ul><div class="row"><a class="btn" href="#/train/weak${field === 'img' ? '' : `?field=${field}`}">Train weak cards</a></div>`
       : `<p class="small">${sum.seen ? 'Nothing is currently weak.' : 'No drill results yet for this set.'}</p>`;
     $('[data-conf]', main).innerHTML = sum.confusions.length
-      ? `<ul class="weak">${sum.confusions.slice(0, 6).map((c) => `<li>${cardInline(c.cards[0])} ↔ ${cardInline(c.cards[1])}<span>${esc(assoc(c.cards[0]))} / ${esc(assoc(c.cards[1]))}</span><span class="small mono">×${c.n}</span><a class="small" href="#/train/i2c?field=${field}&pool=cards:${c.cards.join(',')},${sum.weak.slice(0, 4).join(',')}">separate</a></li>`).join('')}</ul>`
+      ? `<ul class="weak">${sum.confusions.slice(0, 6).map((c) => `<li><span class="pair-cards">${cardInline(c.cards[0])} ↔ ${cardInline(c.cards[1])}</span><span>${esc(assoc(c.cards[0]))} / ${esc(assoc(c.cards[1]))}</span><span class="small mono">×${c.n}</span><a class="small" href="#/train/i2c?field=${field}&pool=cards:${c.cards.join(',')},${sum.weak.slice(0, 4).join(',')}">separate</a></li>`).join('')}</ul>`
       : '<p class="small">No confusions recorded. They are logged when you pick the wrong card in an image → card drill.</p>';
     $$('[data-grid] [data-card]', main).forEach((b) => { b.onclick = () => { selected = b.dataset.card === selected ? null : b.dataset.card; paint(); }; });
   };

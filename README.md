@@ -44,6 +44,8 @@ A timed goal counts only when recall is perfect and no hints were used. A 100-se
 - **Progress** — a 52-card mastery grid with a record for every card (accuracy, response times, attempts, confusions, next review), goals, the sequence ladder, charts and history.
 - **Handbook** — a searchable reference for every technique, including the exact review schedule and recommendation rules.
 
+**Appearance.** The default style is Ledger: plain paper, ruled sections, large figures, in light and dark. Under My Systems → Data you can switch to Notebook (the original graph-paper look, light and dark), Library (dark, serif) or Table (light, with card screens on green baize).
+
 The adaptive part is a set of fixed, readable rules (see `www/js/core/adapt.js` and the handbook), not a model. Each recommendation shows the reason for it.
 
 ## Run it locally

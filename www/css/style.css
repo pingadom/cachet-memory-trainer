@@ -486,3 +486,4 @@ input.answer.wide { max-width: 100%; }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 @media print { .nav, .tabbar { display: none; } .shell { display: block; } body { background: #fff; } }
+.pair-cards { white-space: nowrap; }
